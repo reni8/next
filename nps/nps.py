@@ -19,14 +19,20 @@ class Nps:
         """
         self.notas = []
 
-    def adicionar_nota(self, nota) -> None:
-        """Adiciona uma nota na lista de notas para o cálculo do NPS
+    def validar_nota(func) -> None:
+        """Função decorator para validar o valor da nota
         """
+        def wrapper(self, nota):
+            if 0 <= nota <= 10:
+                func(self, nota)
+            else:
+                print('A nota deve ter um valor entre 0 e 10')
+        return wrapper
 
-        if 0 <= nota <=10:
-            self.notas.append(nota)
-        else:
-            print('A nota deve ter um valor entre 0 e 10')
+    @validar_nota
+    def adicionar_nota(self, nota):
+        """Adiciona uma nota na lista de notas para o cálculo do NPS"""
+        self.notas.append(nota)
 
     def calcular_nps(self) -> float:
         """Realiza o cáculo do NPS:
@@ -54,6 +60,19 @@ class Nps:
         nps = percent_promotores - percent_detratores
         return nps
 
+    def avaliar_classificacao(self):
+        """Classsifica o resultado do NPS
+        """
+        nps = self.calcular_nps()
+        if nps < 0:
+            print('Zona Crítica')
+        elif nps < 50:
+            print('Zona Neutra (Razoável)')
+        elif nps < 75:
+            print('Zona de Qualidade (Muito bom)')
+        else:
+            print('Zona de Excelência (Excelente)')
+
 if __name__ == '__main__':
     enquete1 = Nps()
     enquete1.adicionar_nota(10)
@@ -68,4 +87,5 @@ if __name__ == '__main__':
     enquete1.adicionar_nota(9)
     enquete1.adicionar_nota(10)
 
-    print(enquete1.calcular_nps())
+    print(f'Valor do NPS = {enquete1.calcular_nps()}')
+    enquete1.avaliar_classificacao()
